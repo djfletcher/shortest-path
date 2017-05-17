@@ -1,3 +1,5 @@
+require_relative 'graph'
+
 def dfs_topological_sort(vertices, seen = Set.new, sorted = [])
   return sorted if vertices.empty?
   vertices.each do |vertex|
