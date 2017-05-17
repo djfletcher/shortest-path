@@ -31,6 +31,37 @@ def topological_shortest_path(vertices, start, finish)
   data[finish][:cost]
 end
 
+
+def dijkstra(vertices, start, finish)
+  data = {}
+  unexplored = vertices.dup
+  unexplored.each do |v|
+    data[v] = {
+      cost: v == start ? 0 : Float::INFINITY,
+      prev: nil
+    }
+  end
+
+  until unexplored.empty?
+    vertex = extract_min(unexplored, data)
+    vertex.out_edges.each do |edge|
+      child = edge.to_vertex
+      if data[vertex][:cost] + edge.cost < data[child][:cost]
+        data[child][:cost] = data[vertex][:cost] + edge.cost
+        data[child][:prev] = vertex
+      end
+    end
+  end
+
+  data[finish][:cost]
+end
+
+def extract_min(array, data)
+  array.sort! { |a, b| data[a][:cost] <=> data[b][:cost] }.shift
+end
+
+
+
 v1 = Vertex.new("Wash Markov")
 v2 = Vertex.new("Feed Markov")
 v3 = Vertex.new("Dry Markov")
@@ -46,3 +77,8 @@ puts topological_shortest_path([v1, v2, v3, v4].shuffle, v1, v4) == 6
 puts topological_shortest_path([v1, v2, v3, v4].shuffle, v1, v3) == 5
 puts topological_shortest_path([v1, v2, v3, v4, v5].shuffle, v1, v5) == Float::INFINITY
 puts topological_shortest_path([v1, v2, v3, v4].shuffle, v2, v1) == Float::INFINITY
+
+puts dijkstra([v1, v2, v3, v4].shuffle, v1, v4) == 6
+puts dijkstra([v1, v2, v3, v4].shuffle, v1, v3) == 5
+puts dijkstra([v1, v2, v3, v4, v5].shuffle, v1, v5) == Float::INFINITY
+puts dijkstra([v1, v2, v3, v4].shuffle, v2, v1) == Float::INFINITY
